@@ -1,1 +1,1 @@
-# Jang_neuron_seg
+# neuron_seg
