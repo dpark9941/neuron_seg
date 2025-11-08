@@ -1,0 +1,11 @@
+# Tell Git to leave Zarr files alone. Treat them as binary.
+*.zgroup binary
+*.zarray binary
+*.zattrs binary
+
+# Force text-based files to always use LF (Linux) endings
+*.py text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf

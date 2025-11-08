@@ -1,0 +1,126 @@
+# 🚀 Project Environment Setup (Complete Guide from Scratch)
+
+This guide covers the complete, first-time setup for this project on a Windows machine. It assumes you have **no** Linux, WSL, or Conda installed.
+
+We will install:
+1.  **WSL** (Windows Subsystem for Linux)
+2.  **Ubuntu 18.04** (the specific Linux distribution for this project)
+3.  **Miniconda** (to manage our environment)
+4.  The project's Conda **environment**, which automatically installs the correct **Python version (3.10)** and all required libraries.
+
+---
+
+## 1. Install WSL & Ubuntu 18.04
+
+These steps are run in **Windows PowerShell (as Administrator)**.
+
+1.  Press the **Windows Key** (or click the Start Menu).
+2.  Type `PowerShell`.
+3.  You will see "Windows PowerShell" in the search results. Right-click it and select "**Run as administrator**".
+4.  In the blue PowerShell window, copy and paste this command, then press `Enter` to enable WSL:
+    ```powershell
+    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+    ```
+5.  Now, copy and paste this command to install **Ubuntu 18.04** (this specific version is important):
+    ```powershell
+    wsl --install -d Ubuntu-18.04
+    ```
+6.  **CRITICAL:** You must **restart your computer** for all changes to take effect. Close all windows and restart.
+
+---
+
+## 2. First-Time Ubuntu Setup
+
+1.  After restarting, press the **Windows Key**.
+2.  Type `Ubuntu 18.04` and press `Enter`.
+3.  A black terminal window will open. The first time, it will show a message like "Installing, this may take a few minutes..."
+4.  After it finishes, it will prompt you to: `Enter new UNIX username:`.
+5.  Type a simple username (e.g., your first name, no spaces) and press `Enter`.
+6.  It will then ask you to: `Enter new UNIX password:`.
+7.  Type a password and press `Enter`. (You will not see any characters as you type. This is normal.)
+8.  You will be asked to re-type the password to confirm. Do so and press `Enter`.
+9.  You are now logged in to your Ubuntu 18.04 terminal.
+
+---
+
+## 3. Install Miniconda (in Ubuntu)
+
+All a-following steps are run **inside your Ubuntu 18.04 terminal**.
+
+1.  Download the Miniconda installer. Copy and paste this command into the Ubuntu terminal:
+    ```bash
+    wget [https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)
+    ```
+2.  Run the installer script:
+    ```bash
+    bash Miniconda3-latest-Linux-x86_64.sh
+    ```
+3.  The installer will ask you questions. Follow these steps:
+    * It will show "Please, press ENTER to continue". Press `Enter`.
+    * It will show the license agreement. Press `q` to stop reading.
+    * It will ask: "Do you accept the license terms? [yes|no]". Type `yes` and press `Enter`.
+    * It will ask you to confirm the install location. Press `Enter` to accept the default.
+    * It will ask: "Do you wish the installer to initialize Miniconda3? [yes|no]". Type `yes` and press `Enter`.
+4.  **CRITICAL:** You must **close and re-open your Ubuntu terminal** for the Conda setup to take effect.
+    * Click the "X" on the Ubuntu window to close it.
+    * Press the **Windows Key**, type `Ubuntu 18.04`, and press `Enter` to re-open it.
+5.  Verify the installation. Your terminal prompt should now start with `(base)`. Type this command to check the version:
+    ```bash
+    conda --version
+    ```
+    *You should see a version number, like `conda 24.x.x`.*
+
+---
+
+## 4. Clone the Project Repository
+
+1.  Install `git` (the tool for cloning repositories). We also update our package lists first.
+    ```bash
+    sudo apt update
+    sudo apt install git -y
+    ```
+    *(This will ask for the UNIX password you created in step 2.)*
+
+2.  Navigate to your home directory:
+    ```bash
+    cd ~ 
+    ```
+3.  Clone the project (replace with your repository's URL):
+    ```bash
+    git clone [https://github.com/your-username/your-repository.git](https://github.com/your-username/your-repository.git)
+    ```
+4.  Navigate into the new project directory:
+    ```bash
+    cd your-repository-name
+    ```
+5.  Verify you are in the right place by listing the files. You must see the `environment.yml` file.
+    ```bash
+    ls
+    ```
+    *You should see `environment.yml`, `README.md`, and other project files.*
+
+---
+
+## 5. Create & Activate the Environment (Installs Python 3.10)
+
+This is the final step. The `environment.yml` file is a recipe that will automatically create a new, isolated environment with **Python 3.10** and all other required libraries.
+
+1.  Create the environment from the file:
+    ```bash
+    conda env create -f environment.yml
+    ```
+    *This will take several minutes. It will create a new environment (e.g., `lsd_env`) and install all packages.*
+
+2.  Activate your new environment:
+    ```bash
+    conda activate lsd_env 
+    ```
+    *(Note: If the environment name is different, use the name you saw during the creation step. Your terminal prompt will change from `(base)` to `(lsd_env)`.)*
+
+3.  **Verify the Python Version:**
+    ```bash
+    python --version
+    ```
+    This should now show the project's specific Python version, **`Python 3.10.x`**, which was installed by the `.yml` file.
+
+**You are now fully set up and ready to run the project!**
