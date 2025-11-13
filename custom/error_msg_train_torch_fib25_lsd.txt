@@ -1,0 +1,657 @@
+(lsd_env) superstem@Heavy-Hitter:~/lsd/lsd/custom$ python train_torch_fib25_lsd.py
+/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/google/api_core/_python_version_support.py:266: FutureWarning: You are using a Python version (3.10.14) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+  warnings.warn(message, FutureWarning)
+UNet(
+  (l_conv): ModuleList(
+    (0): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(1, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (1): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(12, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (2): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(72, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (3): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(432, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(2592, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+  )
+  (l_down): ModuleList(
+    (0-1): 2 x Downsample(
+      (down): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+    )
+    (2): Downsample(
+      (down): MaxPool3d(kernel_size=(3, 3, 3), stride=(3, 3, 3), padding=0, dilation=1, ceil_mode=False)
+    )
+  )
+  (r_up): ModuleList(
+    (0): ModuleList(
+      (0): Upsample(
+        (up): ConvTranspose3d(72, 72, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (1): Upsample(
+        (up): ConvTranspose3d(432, 432, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (2): Upsample(
+        (up): ConvTranspose3d(2592, 2592, kernel_size=(3, 3, 3), stride=(3, 3, 3))
+      )
+    )
+  )
+  (r_conv): ModuleList(
+    (0): ModuleList(
+      (0): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(84, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (1): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(504, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (2): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(3024, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+    )
+  )
+)
+<bound method Module.modules of UNet(
+  (l_conv): ModuleList(
+    (0): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(1, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (1): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(12, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (2): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(72, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (3): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(432, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(2592, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+  )
+  (l_down): ModuleList(
+    (0-1): 2 x Downsample(
+      (down): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+    )
+    (2): Downsample(
+      (down): MaxPool3d(kernel_size=(3, 3, 3), stride=(3, 3, 3), padding=0, dilation=1, ceil_mode=False)
+    )
+  )
+  (r_up): ModuleList(
+    (0): ModuleList(
+      (0): Upsample(
+        (up): ConvTranspose3d(72, 72, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (1): Upsample(
+        (up): ConvTranspose3d(432, 432, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (2): Upsample(
+        (up): ConvTranspose3d(2592, 2592, kernel_size=(3, 3, 3), stride=(3, 3, 3))
+      )
+    )
+  )
+  (r_conv): ModuleList(
+    (0): ModuleList(
+      (0): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(84, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (1): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(504, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (2): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(3024, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+    )
+  )
+)>
+Starting LSD training with PyTorch...
+Traceback (most recent call last):
+  File "/home/superstem/lsd/lsd/custom/train_torch_fib25_lsd.py", line 382, in <module>
+    train_until(iterations)
+  File "/home/superstem/lsd/lsd/custom/train_torch_fib25_lsd.py", line 376, in train_until
+    b.request_batch(request)                                         # Constructs the actual pipeline and STARTS the process (workers working, batch stuff)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/pipeline.py", line 139, in request_batch
+    raise PipelineRequestError(self, request, original_traceback=tb) from None
+gunpowder.pipeline.PipelineRequestError: gunpowder.nodes.batch_provider.BatchRequestError: Exception in PrintProfilingStats while processing request
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Snapshot while processing request
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in IntensityScaleShift while processing request
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Squeeze while processing request
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Train while processing request
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+Traceback (most recent call last):
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/batch_provider.py", line 193, in request_batch
+    batch = self.provide(upstream_request)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/batch_filter.py", line 180, in provide
+    processed_batch = self.process(node_batch, downstream_request)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/generic_train.py", line 151, in process
+    self.train_step(batch, request)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/torch/nodes/train.py", line 237, in train_step
+    model_outputs = self.model(*device_input_args, **device_input_kwargs)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/superstem/lsd/lsd/custom/train_torch_fib25_lsd.py", line 66, in forward
+    y = self.model.forward(x)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 420, in forward
+    y = self.rec_forward(self.num_levels - 1, x)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 407, in rec_forward
+    gs_out = self.rec_forward(level - 1, g_in)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 407, in rec_forward
+    gs_out = self.rec_forward(level - 1, g_in)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 410, in rec_forward
+    fs_right = [
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 411, in <listcomp>
+    self.r_up[h][i](f_left, gs_out[h]) for h in range(self.num_heads)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/funlib/learn/torch/models/unet.py", line 181, in forward
+    return torch.cat([f_cropped, g_cropped], dim=1)
+RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 432 but got size 2592 for tensor number 1 in the list.
+
+
+
+
+
+Exception in pipeline:
+(ZarrSource[funke/fib25/training/trvol-250-1.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/trvol-250-2.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/tstvol-520-1.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/tstvol-520-2.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject) -> RandomProvider -> ElasticAugment -> SimpleAugment -> ElasticAugment -> IntensityAugment -> GrowBoundary -> AddLocalShapeDescriptor -> UnmaskBackground -> IntensityScaleShift -> Unsqueeze -> Unsqueeze -> PreCache -> Train -> Squeeze -> IntensityScaleShift -> Snapshot -> PrintProfilingStats
+while trying to process request
+
+        RAW: ROI: [0:1568, 0:1568, 0:1568] (1568, 1568, 1568), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1152, 416:1152, 416:1152] (736, 736, 736), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+
+(lsd_env) superstem@Heavy-Hitter:~/lsd/lsd/custom$ python train_torch_fib25_lsd.py
+/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/google/api_core/_python_version_support.py:266: FutureWarning: You are using a Python version (3.10.14) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+  warnings.warn(message, FutureWarning)
+UNet(
+  (l_conv): ModuleList(
+    (0): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(1, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (1): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(12, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (2): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(72, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (3): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(432, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(2592, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+  )
+  (l_down): ModuleList(
+    (0-1): 2 x Downsample(
+      (down): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+    )
+    (2): Downsample(
+      (down): MaxPool3d(kernel_size=(3, 3, 3), stride=(3, 3, 3), padding=0, dilation=1, ceil_mode=False)
+    )
+  )
+  (r_up): ModuleList(
+    (0): ModuleList(
+      (0): Upsample(
+        (up): ConvTranspose3d(72, 72, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (1): Upsample(
+        (up): ConvTranspose3d(432, 432, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (2): Upsample(
+        (up): ConvTranspose3d(2592, 2592, kernel_size=(3, 3, 3), stride=(3, 3, 3))
+      )
+    )
+  )
+  (r_conv): ModuleList(
+    (0): ModuleList(
+      (0): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(84, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (1): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(504, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (2): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(3024, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+    )
+  )
+)
+<bound method Module.modules of UNet(
+  (l_conv): ModuleList(
+    (0): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(1, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (1): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(12, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (2): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(72, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+    (3): ConvPass(
+      (conv_pass): Sequential(
+        (0): Conv3d(432, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (1): ReLU()
+        (2): Conv3d(2592, 2592, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+        (3): ReLU()
+      )
+    )
+  )
+  (l_down): ModuleList(
+    (0-1): 2 x Downsample(
+      (down): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+    )
+    (2): Downsample(
+      (down): MaxPool3d(kernel_size=(3, 3, 3), stride=(3, 3, 3), padding=0, dilation=1, ceil_mode=False)
+    )
+  )
+  (r_up): ModuleList(
+    (0): ModuleList(
+      (0): Upsample(
+        (up): ConvTranspose3d(72, 72, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (1): Upsample(
+        (up): ConvTranspose3d(432, 432, kernel_size=(2, 2, 2), stride=(2, 2, 2))
+      )
+      (2): Upsample(
+        (up): ConvTranspose3d(2592, 2592, kernel_size=(3, 3, 3), stride=(3, 3, 3))
+      )
+    )
+  )
+  (r_conv): ModuleList(
+    (0): ModuleList(
+      (0): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(84, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(12, 12, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (1): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(504, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(72, 72, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+      (2): ConvPass(
+        (conv_pass): Sequential(
+          (0): Conv3d(3024, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (1): ReLU()
+          (2): Conv3d(432, 432, kernel_size=(3, 3, 3), stride=(1, 1, 1))
+          (3): ReLU()
+        )
+      )
+    )
+  )
+)>
+Starting LSD training with PyTorch...
+Traceback (most recent call last):
+  File "/home/superstem/lsd/lsd/custom/train_torch_fib25_lsd.py", line 387, in <module>
+    train_until(iterations)
+  File "/home/superstem/lsd/lsd/custom/train_torch_fib25_lsd.py", line 381, in train_until
+    b.request_batch(request)                                         # Constructs the actual pipeline and STARTS the process (workers working, batch stuff)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/pipeline.py", line 139, in request_batch
+    raise PipelineRequestError(self, request, original_traceback=tb) from None
+gunpowder.pipeline.PipelineRequestError: gunpowder.nodes.batch_provider.BatchRequestError: Exception in PrintProfilingStats while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Snapshot while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in IntensityScaleShift while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Squeeze while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Train while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        PREDICTED_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        EMBEDDING_GRADIENT: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in PreCache while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Unsqueeze while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Unsqueeze while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in IntensityScaleShift while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in UnmaskBackground while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in AddLocalShapeDescriptor while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in GrowBoundary while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [176:1584, 176:1584, 176:1584] (1408, 1408, 1408), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in IntensityAugment while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [176:1584, 176:1584, 176:1584] (1408, 1408, 1408), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in ElasticAugment while processing request
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [176:1584, 176:1584, 176:1584] (1408, 1408, 1408), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in SimpleAugment while processing request
+        RAW: ROI: [-40:1800, -376:2128, -368:2152] (1840, 2504, 2520), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [152:1616, -120:1880, -112:1880] (1464, 2000, 1992), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [376:1376, 208:1560, 232:1544] (1000, 1352, 1312), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in ElasticAugment while processing request
+        RAW: ROI: [-368:2136, -384:2136, -32:1808] (2504, 2520, 1840), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [-112:1888, -112:1880, 152:1616] (2000, 1992, 1464), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [216:1568, 224:1536, 392:1392] (1352, 1312, 1000), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in RandomProvider while processing request
+        RAW: ROI: [-368:2136, -552:2304, -664:2440] (2504, 2856, 3104), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [-112:1888, -256:2008, -352:2112] (2000, 2264, 2464), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [216:1568, 120:1648, 64:1704] (1352, 1528, 1640), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in Reject while processing request
+        RAW: ROI: [-368:2136, -552:2304, -664:2440] (2504, 2856, 3104), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [-112:1888, -256:2008, -352:2112] (2000, 2264, 2464), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [216:1568, 120:1648, 64:1704] (1352, 1528, 1640), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+gunpowder.nodes.batch_provider.BatchRequestError: Exception in RandomLocation while processing request
+        RAW: ROI: [-368:2136, -552:2304, -664:2440] (2504, 2856, 3104), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [-112:1888, -256:2008, -352:2112] (2000, 2264, 2464), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [216:1568, 120:1648, 64:1704] (1352, 1528, 1640), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+Batch returned so far:
+None
+
+Traceback (most recent call last):
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/batch_provider.py", line 193, in request_batch
+    batch = self.provide(upstream_request)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/random_location.py", line 222, in provide
+    self.prepare(request)
+  File "/home/superstem/miniconda/envs/lsd_env/lib/python3.10/site-packages/gunpowder/nodes/random_location.py", line 199, in prepare
+    assert not lcm_shift_roi.unbounded, (
+AssertionError: Can not pick a random location, intersection of upstream ROIs is unbounded.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Exception in pipeline:
+(ZarrSource[funke/fib25/training/trvol-250-1.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/trvol-250-2.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/tstvol-520-1.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject, ZarrSource[funke/fib25/training/tstvol-520-2.zarr] -> Copy -> Normalize -> Pad -> Pad -> Pad -> RandomLocation -> Reject) -> RandomProvider -> ElasticAugment -> SimpleAugment -> ElasticAugment -> IntensityAugment -> GrowBoundary -> AddLocalShapeDescriptor -> UnmaskBackground -> IntensityScaleShift -> Unsqueeze -> Unsqueeze -> PreCache -> Train -> Squeeze -> IntensityScaleShift -> Snapshot -> PrintProfilingStats
+while trying to process request
+
+        RAW: ROI: [0:1760, 0:1760, 0:1760] (1760, 1760, 1760), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_LABELS_MASK: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False
+        GT_EMBEDDING_SCALE: ROI: [416:1344, 416:1344, 416:1344] (928, 928, 928), voxel size: None, interpolatable: None, non-spatial: False, dtype: None, placeholder: False

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Neuron Segmentation Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Basic Styles -->
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #fafafa; }
+    header, nav { background: #2a2f4f; color: white; padding: 12px 20px; }
+    main { padding: 20px; max-width: 1100px; margin: auto; }
+    h1, h2, h3 { margin: 0 0 12px; }
+    a { color: #e6e6e6; text-decoration: none; margin: 0 10px; }
+    a:hover { text-decoration: underline; }
+
+    /* Card common style */
+    .card {
+      background: white; border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px; margin: 16px 0;
+    }
+
+    /* Button style */
+    button {
+      background: #4455dd; color: white; border: none;
+      border-radius: 8px; padding: 8px 16px; margin-top: 10px;
+      cursor: pointer; font-weight: 600;
+    }
+    button:hover { background: #3344bb; }
+
+    /* Section layout */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .viewer-container, .training-container, .results-container {
+      border: 1px solid #ddd; border-radius: 10px; padding: 16px; background: #fff;
+    }
+    .stat-box {
+      display: inline-block; background: #eef; border-radius: 6px;
+      padding: 8px 12px; margin: 6px 6px 0 0; font-size: 0.9em;
+    }
+    .workspace-list li { margin: 6px 0; }
+    .status { color: #007700; font-weight: bold; }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <h1>🧠 Neuron Segmentation Platform</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#home">Home</a> |
+    <a href="#viewer">Data Viewer</a> |
+    <a href="#training">Model & Training</a> |
+    <a href="#results">Results</a> |
+    <a href="#docs">Documents</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <!-- 1️⃣ Home / Session Management -->
+    <section id="home" class="card">
+      <h2>Session Management</h2>
+      <div class="grid">
+        <!-- Create New Session -->
+        <div>
+          <h3>Create New Session</h3>
+          <input type="text" placeholder="Session name" style="width:100%;padding:6px;">
+          <label style="display:block;margin-top:10px;">Upload Data (Zarr / OME-TIFF / H5)</label>
+          <input type="file" multiple>
+          <button>Create Session</button>
+        </div>
+
+        <!-- Existing Sessions -->
+        <div>
+          <h3>Existing Sessions</h3>
+          <ul class="workspace-list">
+            <li>🧬 <b>fib25_neuropil_01</b> — <span class="status">ready</span></li>
+            <li>🧬 <b>mouse_olfactory_02</b> — <span class="status">trained</span></li>
+            <li>🧬 <b>drosophila_brain_01</b> — <span class="status">annotated</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2️⃣ Data Viewer -->
+    <section id="viewer" class="card">
+      <h2>Data Viewer</h2>
+      <div class="viewer-container">
+        <p>Supports 3D volume rendering / slice viewer / ground truth label overlay</p>
+        <ul>
+          <li>🟦 <b>Channel toggle:</b> membrane / nucleus / synapse</li>
+          <li>🟩 <b>Color map:</b> gray / plasma / viridis</li>
+          <li>🟧 <b>View mode:</b> 2D slice / 3D rotation</li>
+        </ul>
+        <button>Open Data</button>
+        <button>Show Label Overlay</button>
+        <button>Show Object Statistics</button>
+      </div>
+    </section>
+
+    <!-- 3️⃣ Model & Training -->
+    <section id="training" class="card">
+      <h2>Model & Training</h2>
+      <div class="training-container">
+        <p>Select model and configure training parameters</p>
+        <label>Model:</label>
+        <select>
+          <option>3D U-Net</option>
+          <option>Local Shape Descriptor (LSD)</option>
+          <option>SegNeuron (Skeleton aware)</option>
+        </select><br><br>
+
+        <label>Patch size:</label> <input type="text" value="64x64x64"><br>
+        <label>Batch size:</label> <input type="number" value="4"><br>
+        <label>Learning rate:</label> <input type="text" value="1e-4"><br>
+        <button>Start Training</button>
+
+        <div style="margin-top:12px;">
+          <div class="stat-box">Epoch: 12 / 100</div>
+          <div class="stat-box">Loss: 0.032</div>
+          <div class="stat-box">Dice: 0.91</div>
+          <div class="stat-box">GPU: RTX A6000</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4️⃣ Results -->
+    <section id="results" class="card">
+      <h2>Result Analysis</h2>
+      <div class="results-container">
+        <p>Quantitative metrics and visual comparison</p>
+        <ul>
+          <li>📊 Automatic calculation of Precision / Recall / IoU / Dice</li>
+          <li>📈 Loss curve and Accuracy graph</li>
+          <li>🧩 GT vs Prediction overlay slider</li>
+        </ul>
+        <button>Export Results (CSV)</button>
+        <button>View 3D Comparison</button>
+      </div>
+    </section>
+
+    <!-- 5️⃣ Documents / Reference -->
+    <section id="docs" class="card">
+      <h2>Documents & References</h2>
+      <p>📚 Project-related manuals and research papers:</p>
+      <ul>
+        <li><a href="#">Imaris Reference Manual</a></li>
+        <li><a href="#">Local Shape Descriptor (LSD) Paper</a></li>
+        <li><a href="#">Drosophila EM Dataset Overview</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

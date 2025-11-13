@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>두 번째 페이지</title>
+</head>
+<body>
+  <h1>🎉 두 번째 페이지에 오신 걸 환영합니다!</h1>
+  <p>이제 다시 돌아가고 싶다면 아래 버튼을 눌러보세요.</p>
+  <button id="backBtn">첫 페이지로 돌아가기</button>
+
+  <script>
+    // 돌아가기 버튼 기능 (별도 JS 파일 없이 간단히)
+    document.getElementById("backBtn").addEventListener("click", function() {
+      window.location.href = "index.html";
+    });
+  </script>
+</html>
+</body>
