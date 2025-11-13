@@ -165,7 +165,8 @@ def rasterize_to_zarr(ims_filepath, zarr_filepath):
             shape=raw_shape,
             dtype=np.uint64,
             chunks=zarr_chunks,
-            compressor=numcodecs.GZip(level=5)
+            compressor=numcodecs.GZip(level=5),
+            zarr_format=2
         )
         # Removed the .fill(0) line
         
@@ -268,6 +269,65 @@ def rasterize_to_zarr(ims_filepath, zarr_filepath):
         
         print(f"✅ Successfully saved Zarr file to: {zarr_filepath}")
 
+def convert_raw_to_zarr(ims_filepath, raw_zarr_filepath):
+    """
+    Reads RAW image volume from Imaris .ims file
+    and writes it to a Zarr array on disk.
+    """
+    print(f"\n--- RAW → ZARR Conversion ---")
+    print(f"  Input:  {ims_filepath}")
+    print(f"  Output: {raw_zarr_filepath}")
+
+    with h5py.File(ims_filepath, 'r') as f:
+
+        raw_path = "DataSet/ResolutionLevel 0/TimePoint 0/Channel 0/Data"
+        if raw_path not in f:
+            raise ValueError(f"ERROR: RAW data not found at {raw_path}")
+
+        raw_ds = f[raw_path]
+
+        # Handle 5D: (1,1,Z,Y,X)
+        raw_shape = raw_ds.shape
+        if len(raw_shape) == 5:
+            raw_shape = raw_shape[2:]  # Z,Y,X
+
+        print(f"    - RAW shape (Z,Y,X): {raw_shape}")
+        dtype = raw_ds.dtype
+        print(f"    - RAW dtype: {dtype}")
+
+        chunk_size = (64, 64, 64)
+        print(f"    - Creating Zarr file...")
+
+        raw_zarr = zarr.open(
+            raw_zarr_filepath,
+            mode='w',
+            shape=raw_shape,
+            dtype=dtype,
+            chunks=chunk_size,
+            # compressor=zarr.Blosc(cname="zstd", clevel=3), Zarr3: do not use Blosc or GZip compressors. They are not supported in zarr3.
+            # codecs=[zarr.codecs.BytesCodec()],
+            # zarr_format=3
+            compressor=numcodecs.GZip(level=5),   # v2 supports GZip/Blosc
+            zarr_format=2                          # <-- KEY LINE
+        )
+
+        print(f"    - Writing data slice-by-slice...")
+
+        # Write slice-by-slice to avoid memory explosion
+        for z in range(raw_shape[0]):
+            # Read slice from .ims (5D or 3D)
+            if len(raw_ds.shape) == 5:
+                slice_ = raw_ds[0, 0, z, :, :]
+            else:
+                slice_ = raw_ds[z, :, :]
+
+            raw_zarr[z, :, :] = slice_
+
+            if (z % 50) == 0:
+                print(f"      - Written slice Z={z}/{raw_shape[0]-1}")
+
+    print(f"  ✅ RAW Zarr saved: {raw_zarr_filepath}")
+
 
 def visualize_skeletons(ims_filepath, html_filepath):
     """
@@ -356,17 +416,18 @@ if __name__ == "__main__":
         sys.exit(1)
         
     ims_file = sys.argv[1]
-
-    # Derive output names from input name
-    base_name = os.path.splitext(os.path.basename(ims_file))[0]
-    zarr_file = f"{base_name}_labels.zarr"
-    html_file = f"{base_name}_skeletons.html"
-    
     if not os.path.exists(ims_file):
         print(f"FATAL ERROR: Input file not found: {ims_file}")
         sys.exit(1)
-        
+
+    # Derive output names from input name
+    base_name = os.path.splitext(os.path.basename(ims_file))[0]
+    raw_file = f"{base_name}_raw.zarr"
+    zarr_file = f"{base_name}_labels.zarr"
+    html_file = f"{base_name}_skeletons.html"
+    
     try:
+        convert_raw_to_zarr(ims_file, raw_file)
         rasterize_to_zarr(ims_file, zarr_file)
         visualize_skeletons(ims_file, html_file)
         
