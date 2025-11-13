@@ -8,9 +8,10 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #f6f7fb;
-      text-align: center;
       margin: 0;
-      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
     header {
       background-color: #1e2a78;
@@ -19,92 +20,130 @@
       font-size: 1.4rem;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-    .viewer {
-      width: 700px;
-      height: 500px;
-      margin: 40px auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
       justify-content: center;
-      align-items: center;
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
+    .container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Left sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #1e2a78;
+    }
+    .file-item {
+      background: #f3f4f6;
+      padding: 10px;
       border-radius: 8px;
+      margin-bottom: 8px;
       cursor: pointer;
-      font-size: 1rem;
+      transition: 0.2s;
+      font-size: 0.95rem;
     }
-    .active {
+    .file-item:hover {
+      background-color: #e0e7ff;
+    }
+    .file-item.active {
       background-color: #2563eb;
       color: white;
+    }
+
+    /* Main viewer area */
+    .viewer {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
+    .viewer h2 {
+      color: #1e2a78;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    .image-grid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background-color: #f3f4f6;
     }
   </style>
 </head>
 <body>
   <header>🧠 Neuron Data Viewer</header>
 
-  <div>
-    <button id="btn2D" class="active">2D View</button>
-    <button id="btn3D">3D View</button>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h3>Uploaded Files</h3>
+      <div id="fileList">
+        <!-- JS fills uploaded file list here -->
+      </div>
+    </div>
+
+    <!-- Main viewer -->
+    <div class="viewer">
+      <h2 id="viewerTitle">Select a file to view</h2>
+      <div id="imageGrid" class="image-grid"></div>
+    </div>
   </div>
 
-  <div class="viewer">
-    <img id="img2D" src="neuron_2d.png" alt="2D Neuron Image" style="width:100%; height:100%; object-fit:contain;">
-    <canvas id="canvas3D" style="display:none;"></canvas>
-  </div>
-
-  <script type="module">
-    import * as THREE from 'https://cdn.skypack.dev/three';
-
-    const btn2D = document.getElementById('btn2D');
-    const btn3D = document.getElementById('btn3D');
-    const img2D = document.getElementById('img2D');
-    const canvas3D = document.getElementById('canvas3D');
-
-    btn2D.onclick = () => {
-      img2D.style.display = 'block';
-      canvas3D.style.display = 'none';
-      btn2D.classList.add('active');
-      btn3D.classList.remove('active');
+  <script>
+    // Simulated uploaded files and their associated images
+    const uploadedFiles = {
+      "fib25_neuropil_01": ["2d_1.png", "2d_2.png", "2d_3.png", "3d_1.png"],
+      "mouse_olfactory_02": ["m2_1.png", "m2_2.png", "m2_3.png"],
+      "drosophila_brain_01": ["db_1.png", "db_2.png", "db_3.png", "db_4.png"]
     };
 
-    btn3D.onclick = () => {
-      img2D.style.display = 'none';
-      canvas3D.style.display = 'block';
-      btn3D.classList.add('active');
-      btn2D.classList.remove('active');
-      init3D();
-    };
+    const fileList = document.getElementById("fileList");
+    const imageGrid = document.getElementById("imageGrid");
+    const viewerTitle = document.getElementById("viewerTitle");
 
-    function init3D() {
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, 700/500, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas3D });
-      renderer.setSize(700, 500);
+    // Render the sidebar list
+    for (const fileName in uploadedFiles) {
+      const div = document.createElement("div");
+      div.textContent = fileName;
+      div.className = "file-item";
+      div.onclick = () => loadFile(fileName, div);
+      fileList.appendChild(div);
+    }
 
-      const geometry = new THREE.SphereGeometry(1, 32, 32);
-      const material = new THREE.MeshStandardMaterial({ color: 0x66ff99, wireframe: true });
-      const neuron = new THREE.Mesh(geometry, material);
-      scene.add(neuron);
+    function loadFile(fileName, clickedDiv) {
+      // Highlight selected
+      document.querySelectorAll(".file-item").forEach(d => d.classList.remove("active"));
+      clickedDiv.classList.add("active");
 
-      const light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(5, 5, 5);
-      scene.add(light);
+      viewerTitle.textContent = `Viewing: ${fileName}`;
+      imageGrid.innerHTML = "";
 
-      camera.position.z = 3;
-
-      function animate() {
-        requestAnimationFrame(animate);
-        neuron.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      animate();
+      // Load its images
+      const images = uploadedFiles[fileName];
+      images.forEach(imgSrc => {
+        const img = document.createElement("img");
+        img.src = imgSrc; // Replace with real image URL when integrated
+        img.alt = fileName;
+        imageGrid.appendChild(img);
+      });
     }
   </script>
 </body>
