@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neuron Data Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f7fb;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1e2a78;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .viewer {
+      width: 700px;
+      height: 500px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .active {
+      background-color: #2563eb;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>🧠 Neuron Data Viewer</header>
+
+  <div>
+    <button id="btn2D" class="active">2D View</button>
+    <button id="btn3D">3D View</button>
+  </div>
+
+  <div class="viewer">
+    <img id="img2D" src="neuron_2d.png" alt="2D Neuron Image" style="width:100%; height:100%; object-fit:contain;">
+    <canvas id="canvas3D" style="display:none;"></canvas>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three';
+
+    const btn2D = document.getElementById('btn2D');
+    const btn3D = document.getElementById('btn3D');
+    const img2D = document.getElementById('img2D');
+    const canvas3D = document.getElementById('canvas3D');
+
+    btn2D.onclick = () => {
+      img2D.style.display = 'block';
+      canvas3D.style.display = 'none';
+      btn2D.classList.add('active');
+      btn3D.classList.remove('active');
+    };
+
+    btn3D.onclick = () => {
+      img2D.style.display = 'none';
+      canvas3D.style.display = 'block';
+      btn3D.classList.add('active');
+      btn2D.classList.remove('active');
+      init3D();
+    };
+
+    function init3D() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, 700/500, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas3D });
+      renderer.setSize(700, 500);
+
+      const geometry = new THREE.SphereGeometry(1, 32, 32);
+      const material = new THREE.MeshStandardMaterial({ color: 0x66ff99, wireframe: true });
+      const neuron = new THREE.Mesh(geometry, material);
+      scene.add(neuron);
+
+      const light = new THREE.PointLight(0xffffff, 1);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+
+      camera.position.z = 3;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        neuron.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+  </script>
+</body>
+</html>
