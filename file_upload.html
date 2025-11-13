@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Neuron Segmentation Platform — Sessions</title>
+  <style>
+    :root {
+      --line-faint: rgba(0,123,255,0.12);
+      --line-active: rgba(0,123,255,0.85);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container { display: flex; gap: 40px; }
+
+    .left, .right {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    h2 { margin-top: 0; }
+
+    .drop-area {
+      border: 2px dashed #007BFF;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      background: #f9f9f9;
+      margin-bottom: 15px;
+    }
+    .drop-area.hover { background: #e6f4ff; }
+
+    .upload-btn {
+      display: inline-block;
+      padding: 8px 15px;
+      background: #007BFF;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .file-name { margin-top: 10px; color: #333; }
+    .error-msg { color: #c00; font-size: 13px; margin-top: 6px; }
+
+    .create-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .session-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px; /* 간격 줄임 */
+      position: relative;
+      min-height: 20px;
+    }
+
+    .session-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px; /* 간격 줄임 */
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      position: relative;
+    }
+
+    .session-row.dragging {
+      opacity: 0.5;
+    }
+
+    .dropzone {
+      height: 6px;
+      margin: 2px 0;
+      border-radius: 4px;
+      background: transparent;
+      transition: background-color .1s ease;
+      pointer-events: auto;
+      opacity: 0;
+    }
+
+    .dropzone.visible {
+      background: var(--line-faint);
+      opacity: 1;
+    }
+
+    .dropzone.active {
+      background: var(--line-active);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .thumbnail {
+      width: 60px;
+      height: 60px;
+      border-radius: 4px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: absolute;
+      left: 70px;
+      top: 0;
+      width: 260px;
+      background: #222;
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      white-space: pre-line;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+      z-index: 30;
+    }
+
+    .thumb-wrap:hover .tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .delete-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      color: #c00;
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="left">
+    <h2>Create New Session</h2>
+    <input id="sessionName" type="text" placeholder="Enter session name" />
+    <div id="drop-area" class="drop-area">
+      <p>Upload Data (Zarr / OME‑TIFF / H5)</p>
+      <input id="fileElem" type="file" accept=".zarr,.ome.tiff,.h5,.tiff,.hdf5" style="display:none" />
+      <label class="upload-btn" for="fileElem">Select File</label>
+      <div class="file-name" id="fileName">No file selected</div>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+    <button class="create-btn" onclick="createSession()">Create Session</button>
+  </div>
+
+  <div class="right">
+    <h2>Existing Sessions</h2>
+    <div id="sessionList" class="session-list"></div>
+  </div>
+</div>
+
+<script>
+const validExt = ['.zarr','.ome.tiff','.h5','.tiff','.hdf5'];
+const sessionNames = new Set();
+let uploadedFile = null;
+let draggingItem = null;
+
+const dropArea = document.getElementById("drop-area");
+const fileElem = document.getElementById("fileElem");
+const fileNameDisplay = document.getElementById("fileName");
+const errorMsg = document.getElementById("errorMsg");
+const sessionList = document.getElementById("sessionList");
+
+dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('hover'); });
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('hover'));
+dropArea.addEventListener('drop', (e) => {
+  e.preventDefault(); dropArea.classList.remove('hover');
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) handleFile(f);
+});
+
+fileElem.addEventListener('change', () => {
+  const f = fileElem.files && fileElem.files[0];
+  if(f) handleFile(f);
+});
+
+function handleFile(file){
+  if(!file) return;
+  const name = file.name.toLowerCase();
+  const ok = validExt.some(ext => name.endsWith(ext));
+  if(!ok){
+    uploadedFile = null;
+    fileNameDisplay.textContent = '';
+    errorMsg.textContent = 'This file format is unsupported.';
+  } else {
+    uploadedFile = file;
+    fileNameDisplay.textContent = `Selected file: ${file.name}`;
+    errorMsg.textContent = '';
+  }
+}
+
+function generateUniqueName(base){
+  if(!sessionNames.has(base)) return base;
+  let i = 1;
+  let candidate;
+  do {
+    candidate = `${base} (${i++})`;
+  } while(sessionNames.has(candidate));
+  return candidate;
+}
+
+function rebuildDropzones(){
+  const rows = Array.from(sessionList.querySelectorAll('.session-row'));
+  sessionList.innerHTML = '';
+
+  const appendDropzone = () => {
+    const dz = document.createElement('div');
+    dz.className = 'dropzone';
+
+    dz.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dz.classList.add('active');
+    });
+
+    dz.addEventListener('dragleave', () => {
+      dz.classList.remove('active');
+    });
+
+    dz.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    dz.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dz.classList.remove('active');
+      if (!draggingItem) return;
+      sessionList.insertBefore(draggingItem, dz.nextSibling);
+      cleanupAfterDrop();
+    });
+
+    sessionList.appendChild(dz);
+  };
+
+  appendDropzone();
+  rows.forEach(r => {
+    sessionList.appendChild(r);
+    appendDropzone();
+  });
+
+  sessionList.querySelectorAll('.dropzone').forEach(dz => dz.classList.remove('visible','active'));
+}
+
+function createSession(){
+  const nameInput = document.getElementById("sessionName").value.trim();
+  if(!nameInput) return alert("Please enter a session name.");
+  if(!uploadedFile) return alert("Please upload a valid data file.");
+
+  const finalName = generateUniqueName(nameInput);
+  sessionNames.add(finalName);
+
+  const isImg = uploadedFile.type.startsWith('image/');
+  const reader = new FileReader();
+  reader.onload = () => {
+    const url = isImg ? reader.result : 'https://dummyimage.com/60x60/cccccc/000000&text=FILE';
+    const row = document.createElement('div');
+    row.className = 'session-row';
+
+    row.innerHTML = `
+      <div class="thumb-wrap">
+        <img class="thumbnail" src="${url}" alt="${finalName}" />
+        <div class="tooltip">Status: Uploaded\nFile: ${uploadedFile.name}\nSize: ${(uploadedFile.size/1024/1024).toFixed(2)} MB</div>
+      </div>
+      <div><strong>${finalName}</strong><div class="meta">uploaded</div></div>
+      <button class="delete-btn" title="Delete session">🗑️</button>
+    `;
+
+    row.querySelector('.delete-btn').addEventListener('click', ()=>{
+      const ok = confirm('Are you sure you want to delete this session?\nThis action is irreversible.');
+      if(!ok) return;
+      const nm = row.querySelector('strong').textContent;
+      sessionNames.delete(nm);
+      row.remove();
+      rebuildDropzones();
+    });
+
+    makeRowDraggable(row);
+    sessionList.appendChild(row);
+    rebuildDropzones();
+
+    document.getElementById("sessionName").value = '';
+    fileNameDisplay.textContent = 'No file selected';
+    uploadedFile = null;
+  };
+
+  if(isImg) reader.readAsDataURL(uploadedFile);
+  else reader.onload();
+}
+
+function makeRowDraggable(row){
+  row.draggable = true;
+
+  row.addEventListener('dragstart', (e)=>{
+    draggingItem = row;
+    row.classList.add('dragging');
+    sessionList.querySelectorAll('.dropzone').forEach(dz => dz.classList.add('visible'));
+    e.dataTransfer.setData('text/plain','dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  row.addEventListener('dragend', ()=>{
+    cleanupAfterDrop();
+  });
+}
+
+function cleanupAfterDrop(){
+  if(draggingItem){
+    draggingItem.classList.remove('dragging');
+    draggingItem = null;
+  }
+  sessionList.querySelectorAll('.dropzone').forEach(dz => dz.classList.remove('visible','active'));
+  rebuildDropzones();
+}
+
+rebuildDropzones();
+</script>
+</body>
+</html>
