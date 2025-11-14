@@ -170,7 +170,7 @@ def train_until(max_iteration):
     # --- MODEL PARAMETERS (from mknet.py) ---
     in_channels = 1
     num_fmaps = 12
-    fmap_inc_factors = 6
+    fmap_inc_factors = 6 # 5 or 4
     downsample_factors = [(2,2,2),(2,2,2),(3,3,3)]
     out_channels = 10 # 10 LSDs
 
@@ -201,12 +201,12 @@ def train_until(max_iteration):
 
     # --- SHAPES (from mknet.py) ---
     # Input shape for 'train_net'
-    input_shape = Coordinate((220, 220, 220)) #from 196
+    input_shape = Coordinate((196, 196, 196)) #from 196
     
     # Output shape is determined by the U-Net architecture
     # Given the input_shape and downsample_factors, the output
     # shape from the original affinity example (84, 84, 84) is correct.
-    output_shape = Coordinate((116, 116, 116))
+    output_shape = Coordinate((84, 84, 84))
 
     voxel_size = Coordinate((8,)*3)                                     #'Coordinate' part of gunpowder, tells gunpowder 'a single voxel = 8x8x8 units in physical world'
 
@@ -241,19 +241,30 @@ def train_until(max_iteration):
 
     # --- DATA SOURCE (Placeholder) ---
     data_sources = tuple(
+            # ZarrSource(
+            #         os.path.join(data_dir, sample),                     # Each "Sample" is a zarr file (like a zip file), in which exists multiple datasets
+            #         {                                                   # Inside each sample are individual datasets of raw, neuron_ids, mask etc
+            #             raw: 'volumes/raw',
+            #             labels: 'volumes/labels/neuron_ids',
+            #             #labels_mask: 'volumes/labels/mask',
+            #         },
+            #         {
+            #             raw: ArraySpec(interpolatable=True),            # rules for how to handle each ArrayKey, interpolatable = is 'continuous', so if needed, can 'average'
+            #             labels: ArraySpec(interpolatable=False),
+            #             #labels_mask: ArraySpec(interpolatable=False)
+            #         }                                                   # A + B means "take the data from node A, and pass it to node B" --> creates a pipeline
+            #     ) +
             ZarrSource(
-                    os.path.join(data_dir, sample),                     # Each "Sample" is a zarr file (like a zip file), in which exists multiple datasets
-                    {                                                   # Inside each sample are individual datasets of raw, neuron_ids, mask etc
-                        raw: 'volumes/raw',
-                        labels: 'volumes/labels/neuron_ids',
-                        #labels_mask: 'volumes/labels/mask',
-                    },
-                    {
-                        raw: ArraySpec(interpolatable=True),            # rules for how to handle each ArrayKey, interpolatable = is 'continuous', so if needed, can 'average'
-                        labels: ArraySpec(interpolatable=False),
-                        #labels_mask: ArraySpec(interpolatable=False)
-                    }                                                   # A + B means "take the data from node A, and pass it to node B" --> creates a pipeline
-                ) +
+                os.path.join(data_dir, sample),
+                {
+                    raw: 'volumes/raw',
+                    labels: 'volumes/labels/neuron_ids',
+                },
+                {
+                    raw: ArraySpec(interpolatable=True,  voxel_size=voxel_size, dtype=np.float32),
+                    labels: ArraySpec(interpolatable=False, voxel_size=voxel_size, dtype=np.uint64),
+                }
+            )
             #Copy(labels, labels_mask) + #Added
             #Normalize(raw) +
             #Pad(raw, 0) + 
@@ -270,9 +281,13 @@ def train_until(max_iteration):
         
             Copy(labels, labels_mask) +
             Normalize(raw) +
-            Pad(raw, None) +
-            Pad(labels, labels_padding) + 
-            Pad(labels_mask, labels_padding) +
+            # Pad(raw, None) +
+            # Pad(labels, labels_padding) + 
+            # Pad(labels_mask, labels_padding) +
+            finite_pad = Coordinate((128,128,128))
+            Pad(raw, finite_pad)
+            Pad(labels, finite_pad)
+            Pad(labels_mask, finite_pad)
             RandomLocation(min_masked=0.5, mask=labels_mask)
             
             for sample in samples
@@ -324,8 +339,15 @@ def train_until(max_iteration):
     train_pipeline += IntensityScaleShift(raw, 2,-1) #intensity stuff
 
     # PyTorch-specific nodes for channel dimensions
-    train_pipeline += Unsqueeze([raw])
-    train_pipeline += Unsqueeze([gt_embedding, gt_embedding_scale])      # Should... handle the dimension requirement diff between pytorch and tensorflow
+    # train_pipeline += Unsqueeze([raw])
+    # train_pipeline += Unsqueeze([gt_embedding, gt_embedding_scale])      # Should... handle the dimension requirement diff between pytorch and tensorflow
+    # ensure dtype
+    train_pipeline += EnsureDtype(raw, np.float32)
+    train_pipeline += EnsureDtype(labels, np.uint64)
+
+    # add a channel dim as first spatial axis (C)
+    train_pipeline += Unsqueeze([raw], dims=[0])                 # raw: (C=1,Z,Y,X)
+    train_pipeline += Unsqueeze([gt_embedding, gt_embedding_scale], dims=[0])  # (C=10,Z,Y,X) and (C=10,Z,Y,X)
 
     train_pipeline += PreCache(                                          # Buffer for slow cpu stuff above, to be loaded into fast gpu stuff below
             cache_size=4,
