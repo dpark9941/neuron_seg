@@ -1,1 +1,6 @@
 .DS_Store
+TBX DIO TRE-XFP ScalesSQ 20x 1.0Wtile stack_Subset_Stitch_1_traced_labels.zarr/
+TBX DIO TRE-XFP ScalesSQ 20x 1.0Wtile stack_Subset_Stitch_1_traced_raw.zarr/
+custom/jang/
+custom/funke/
+custom/gp/__pycache__/
