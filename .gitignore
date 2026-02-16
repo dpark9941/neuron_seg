@@ -1,6 +1,23 @@
+# macOS
 .DS_Store
+
+# local venv
+.venv/
+venv/
+
+# python cache
+__pycache__/
+*.pyc
+custom/gp/__pycache__/
+
+# local TLS certs 
+*.pem
+*-key.pem
+
+# big/local datasets 
 TBX DIO TRE-XFP ScalesSQ 20x 1.0Wtile stack_Subset_Stitch_1_traced_labels.zarr/
 TBX DIO TRE-XFP ScalesSQ 20x 1.0Wtile stack_Subset_Stitch_1_traced_raw.zarr/
+
+# custom local code/experiments 
 custom/jang/
 custom/funke/
-custom/gp/__pycache__/
